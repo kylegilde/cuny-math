@@ -6,15 +6,16 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE) 
+#knitr::opts_chunk$set(echo = FALSE) 
 #`echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+require(prob) #https://cran.r-project.org/web/packages/prob/vignettes/prob.pdf
+require(plyr)
+require(RCurl)
 ```
 
 1. 	There are 540 identical plastic chips numbered 1 through 540 in a box.  What is the probability of reaching into the box and randomly drawing the chip numbered 505?  Express your answer as a fraction or a decimal number rounded to four decimal places.
 
 ```{r}
-require(prob)
-#https://cran.r-project.org/web/packages/prob/vignettes/prob.pdf
 1/540
 
 ```
@@ -34,7 +35,6 @@ ans
 
  
 ```{r}
-cards()
 S <- cards()
 A <- subset(S, suit == "Heart")
 B <- subset(S, rank %in% c("A", 1:10))
@@ -46,10 +46,10 @@ nrow(ans)/nrow(S)
 
 ```{r}
 ss <- rolldie(2)
-ss
 ss$sum <- ss[,1] + ss[,2]
 ss$less_than_6 <- ss$sum < 6
-count(ss$less_than_6)
+freqT <- count(ss$less_than_6)
+freqT[2,2]/sum(freqT[,2])
 ```
 
 5. 	A pizza delivery company classifies its customers by gender and location of residence.  The research department has gathered data from a random sample of 2001 customers.  The data is summarized in the table below.
@@ -57,15 +57,11 @@ count(ss$less_than_6)
 What is the probability that a customer is male?  Write your answer as a fraction or a decimal number rounded to four decimal places. 
 
 ```{r}
-require(RCurl)
 myfile <- "https://raw.githubusercontent.com/kylegilde/cuny-math/master/Q5%20Table.csv"
 myURL <- getURL(myfile)
 Q5_table <- read.csv(text = myURL, sep = ",")
 sum(Q5_table$Males)/sum(Q5_table)
 ```
-
-
-
 
 6. 	Three cards are drawn with replacement from a standard deck.   What is the probability that the first card will be a club, the second card will be a black card, and the third card will be a face card?  Write your answer as a fraction or a decimal number rounded to four decimal places.
 
