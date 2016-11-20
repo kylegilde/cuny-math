@@ -16,7 +16,7 @@ require(RCurl)
 1. 	There are 540 identical plastic chips numbered 1 through 540 in a box.  What is the probability of reaching into the box and randomly drawing the chip numbered 505?  Express your answer as a fraction or a decimal number rounded to four decimal places.
 
 ```{r}
-1/540
+round(1/540, 4)
 
 ```
 
@@ -39,7 +39,7 @@ S <- cards()
 A <- subset(S, suit == "Heart")
 B <- subset(S, rank %in% c("A", 1:10))
 ans <- intersect(A,B)
-nrow(ans)/nrow(S)
+round(nrow(ans)/nrow(S), 4)
 ```
 
 4. 	A standard pair of six-sided dice is rolled.  What is the probability of rolling a sum less than 6?  Write your answer as a fraction or a decimal number rounded to four decimal places.
@@ -49,10 +49,12 @@ ss <- rolldie(2)
 ss$sum <- ss[,1] + ss[,2]
 ss$less_than_6 <- ss$sum < 6
 freqT <- count(ss$less_than_6)
-freqT[2,2]/sum(freqT[,2])
+round(freqT[2,2]/sum(freqT[,2]), 4)
 ```
 
-5. 	A pizza delivery company classifies its customers by gender and location of residence.  The research department has gathered data from a random sample of 2001 customers.  The data is summarized in the table below.
+5. 	A pizza delivery company classifies its customers by gender and location of residence.  
+The research department has gathered data from a random sample of 2001 customers.  The data 
+is summarized in the table below.
 
 What is the probability that a customer is male?  Write your answer as a fraction or a decimal number rounded to four decimal places. 
 
@@ -60,20 +62,48 @@ What is the probability that a customer is male?  Write your answer as a fractio
 myfile <- "https://raw.githubusercontent.com/kylegilde/cuny-math/master/Q5%20Table.csv"
 myURL <- getURL(myfile)
 Q5_table <- read.csv(text = myURL, sep = ",")
-sum(Q5_table$Males)/sum(Q5_table)
+round(sum(Q5_table$Males)/sum(Q5_table),4)
 ```
 
 6. 	Three cards are drawn with replacement from a standard deck.   What is the probability that the first card will be a club, the second card will be a black card, and the third card will be a face card?  Write your answer as a fraction or a decimal number rounded to four decimal places.
 
- 
- 
+```{r}
+Deck <- cards()
+
+A <- subset(Deck, suit == "Club")
+PA <- nrow(A)/nrow(Deck)
+B <- subset(Deck, suit %in% c("Club","Spade"))
+PB <- nrow(B)/nrow(Deck)
+C <- subset(Deck, rank %in% c("K", "Q", "J"))
+PC <- nrow(C)/nrow(Deck)
+
+PABC <- round(PA * PB * PC, 4)
+
+PABC #== 3/104
+```
+
 
 7. 	Two cards are drawn without replacement from a standard deck of 52 playing cards.  What is the probability of choosing a spade for the second card drawn, if the first card, drawn without replacement, was a heart?  Write your answer as a fraction or a decimal number rounded to four decimal places.
 
- 
+```{r}
+Deck <- cards()
+PBGA <- nrow(subset(Deck, suit == "Spade"))/(nrow(Deck) - 1)
+round(PBGA, 4) 
+# 13/51
+
+```
+
 
 8. 	Two cards are drawn without replacement from a standard deck of 52 playing cards.  What is the probability of choosing a heart and then, without replacement, a red card?  Write your answer as a fraction or a decimal number rounded to four decimal places.
 
+```{r}
+Deck <- cards()
+PA <- nrow(subset(Deck, suit == "Heart"))/(nrow(Deck))
+PBGA <- (nrow(subset(Deck, suit %in% c("Heart","Diamond")))  - 1) /(nrow(Deck) - 1)
+#PA * PBGA == 25/204
+round(PA * PBGA, 4)
+
+```
  
 
 9. 	There are 85 students in a basic math class.  The instructor must choose two students at random.
@@ -88,12 +118,35 @@ Seniors	7	4
 
 What is the probability that a junior female and then a freshmen male are chosen at random?  Write your answer as a fraction or a decimal number rounded to four decimal places. 
 
+```{r}
+myfile <-  "https://raw.githubusercontent.com/kylegilde/cuny-math/master/math%20class%20data.csv"
+myURL <- getURL(myfile)
+Q9_table <- read.csv(text = myURL, sep = ",")
+
+total <- sum(Q9_table$Males, Q9_table$Females)
+A <- subset(Q9_table$Females, Q9_table$year == "Juniors")
+PA <- A/total 
+PA == 4/85
+B <- subset(Q9_table$Males, Q9_table$year == "Freshmen")
+PBGA <- B/(total - 1)
+round(PA * PBGA, 4) #4/595
+
+```
+
 10. 	Out of 300 applicants for a job, 141 are male and 52 are male and have a graduate degree.
 
 Step 1. What is the probability that a randomly chosen applicant has a graduate degree, given that they are male?  Enter your answer as a fraction or a decimal rounded to four decimal places. 
 
+```{r}
+52/141
+
+```
 
 Step 2. If 102 of the applicants have graduate degrees, what is the probability that a randomly chosen applicant is male, given that the applicant has a graduate degree?  Enter your answer as a fraction or a decimal rounded to four decimal places. 
+
+```{r}
+26/51
+```
 
 11. 	A value meal package at Ron's Subs consists of a drink, a sandwich, and a bag of chips.  There are 6 types of drinks to choose from, 5 types of sandwiches, and 3 types of chips.  How many different value meal packages are possible?
 
