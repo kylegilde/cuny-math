@@ -24,10 +24,9 @@ round(1/540, 4)
 2. 	Write out the sample space for the given experiment.  Separate your answers using commas.
 	When deciding what you want to put into a salad for dinner at a restaurant, you will choose one of the following extra toppings: asparagus, cheese.  Also, you will add one of following meats: eggs, turkey.  Lastly, you will decide on one of the following dressings: French, vinaigrette.  (Note: Use the following letters to indicate each choice: A for asparagus, C for cheese, E for eggs, T for turkey, F for French, and V for vinaigrette.)
 
- 
 ```{r}
-perms <- expand.grid(list(c("A", "C"), c("E", "T"),c("F","V")))
-ans <- paste(perms[,1], perms[,2], perms[,3])
+perms <-  expand.grid(list(c("A", "C"), c("E", "T"),c("F","V")))
+ans <- paste(perms[,1], perms[,2], perms[,3], collapse=", ")
 ans
 ```
 
@@ -150,59 +149,92 @@ Step 2. If 102 of the applicants have graduate degrees, what is the probability 
 
 11. 	A value meal package at Ron's Subs consists of a drink, a sandwich, and a bag of chips.  There are 6 types of drinks to choose from, 5 types of sandwiches, and 3 types of chips.  How many different value meal packages are possible?
 
- 
+```{r}
+6 * 5 * 3 #90
+```
 
 12. 	A doctor visits her patients during morning rounds.  In how many ways can the doctor visit 5 patients during the morning rounds?
 
- 
+```{r}
+factorial(5) #120
+``` 
 
 13. 	A coordinator will select 5 songs from a list of 8 songs to compose an event's musical entertainment lineup.  How many different lineups are possible?
 
- 
+```{r}
+nsamp(8,5,ordered=T) #6720
+``` 
 
  
 14. 	A person rolls a standard six-sided die 9 times.  In how many ways can he get 3 fours, 5 sixes and 1 two?
 
- 
+```{r}
+require(combinat)
+outcome <- c(rep(4, 3), rep(6, 5), 2)
+length(unique(permn(outcome))) #362880
+#factorial(9)
+
+
+``` 
 
 15. 	How many ways can Rudy choose 6 pizza toppings from a menu of 14 toppings if each topping can only be chosen once?
 
- 
+```{r}
+nsamp(14,6) #3003
+``` 
 
 16. 	3 cards are drawn from a standard deck of 52 playing cards.  How many different 3-card hands are possible if the drawing is done without replacement?
 
- 
+```{r}
+nsamp(52,3) #22100
+``` 
 
 17. 	You are ordering a new home theater system that consists of a TV, surround sound system, and DVD player.  You can choose from 12 different TVs, 9 types of surround sound systems, and 5 types of DVD players.  How many different home theater systems can you build?
 
- 
+```{r}
+12 * 9 *5 #540
+``` 
 
 18. 	You need to have a password with 5 letters followed by 3 odd digits between 0 - 9 inclusively.  If the characters and digits cannot be used more than once, how many choices do you have for your password?
 
- 
+```{r}
+odds <- c(1,3,5,7,9)
+nsamp(length(letters),5, ordered = T) * nsamp(length(odds),3, ordered = T) 
+#473616000
+``` 
 
 19. 	Evaluate the following expression.
 	 _9 P_4
 
- 
+```{r}
+
+``` 
 
 20. 	Evaluate the following expression.
 	 _11 C_8
+```{r}
 
+```
  
 
 21. 	Evaluate the following expression.
 	( _12 P_8)/( _12 C_4 )
 
- 
+```{r}
+
+``` 
 
 22. 	The newly elected president needs to decide the remaining 7 spots available in the cabinet he/she is appointing.  If there are 13 eligible candidates for these positions (where rank matters), how many different ways can the members of the cabinet be appointed?
 
- 
+```{r}
+
+``` 
 
 23. 	In how many ways can the letters in the word 'Population' be arranged?
 
- 
+```{r}
+
+``` 
 
  
 24. 	Consider the following data:
@@ -212,40 +244,64 @@ p(x)   	0.1 	0.2 	0.3 	0.2 	0.2
 
 
 Step 1. Find the expected value E( X ).  Round your answer to one decimal place.  
+```{r}
 
+```
 
 Step 2. Find the variance.  Round your answer to one decimal place. 
+```{r}
 
+```
 
 Step 3. Find the standard deviation.  Round your answer to one decimal place. 
+```{r}
 
+```
 
 Step 4. Find the value of P(X ³ 9).  Round your answer to one decimal place.  
 
+```{r}
 
+```
 Step 5. Find the value of P(X £ 7).  Round your answer to one decimal place.  
+```{r}
+
+```
+
 
 25. 	Suppose a basketball player has made 188 out of 376 free throws.  If the player makes the next 3 free throws, I will pay you $23.  Otherwise you pay me $4.
 
 Step 1. Find the expected value of the proposition.  Round your answer to two decimal places. 
+```{r}
 
+```
 
 Step 2. If you played this game 994 times how much would you expect to win or lose? (Losses must be entered as negative.) 
+```{r}
 
+```
 26. 	Flip a coin 11 times.  If you get 8 tails or less, I will pay you $1.  Otherwise you pay me $7.
 
 Step 1. Find the expected value of the proposition.  Round your answer to two decimal places. 
+```{r}
 
+```
 
 Step 2. If you played this game 615 times how much would you expect to win or lose? (Losses must be entered as negative.) 
+```{r}
 
+```
 27. 	If you draw two clubs on two consecutive draws from a standard deck of cards you win $583.  Otherwise you pay me $35.  (Cards drawn without replacement.)
 
 Step 1. Find the expected value of the proposition.  Round your answer to two decimal places. 
+```{r}
 
+```
 
 Step 2. If you played this game 632 times how much would you expect to win or lose? (Losses must be entered as negative.) 
+```{r}
 
+```
 28. 	A quality control inspector has drawn a sample of 10 light bulbs from a recent production lot.  If the number of defective bulbs is 2 or less, the lot passes inspection.  Suppose 30% of the bulbs in the lot are defective.  What is the probability that the lot will pass inspection? (Round your answer to 3 decimal places)
 
  
