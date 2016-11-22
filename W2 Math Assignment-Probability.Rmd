@@ -9,6 +9,7 @@ output: html_document
 #knitr::opts_chunk$set(echo = FALSE) 
 #`echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 require(prob) #https://cran.r-project.org/web/packages/prob/vignettes/prob.pdf
+require(combinat)
 require(plyr)
 require(RCurl)
 ```
@@ -169,7 +170,6 @@ nsamp(8,5,ordered=T) #6720
 14. 	A person rolls a standard six-sided die 9 times.  In how many ways can he get 3 fours, 5 sixes and 1 two?
 
 ```{r}
-require(combinat)
 outcome <- c(rep(4, 3), rep(6, 5), 2)
 length(unique(permn(outcome))) #362880
 #factorial(9)
@@ -203,17 +203,15 @@ nsamp(length(letters),5, ordered = T) * nsamp(length(odds),3, ordered = T)
 #473616000
 ``` 
 
-19. 	Evaluate the following expression.
-	 _9 P_4
+19. 	Evaluate the following expression. 9P4
 
 ```{r}
-
+nsamp(9, 4, ordered = T) #3024
 ``` 
 
-20. 	Evaluate the following expression.
-	 _11 C_8
+20. 	Evaluate the following expression.  _11 C_8
 ```{r}
-
+nsamp(11, 8) #165
 ```
  
 
@@ -221,19 +219,21 @@ nsamp(length(letters),5, ordered = T) * nsamp(length(odds),3, ordered = T)
 	( _12 P_8)/( _12 C_4 )
 
 ```{r}
-
+nsamp(12, 8, ordered = T)/nsamp(12, 4) #40320
 ``` 
 
 22. 	The newly elected president needs to decide the remaining 7 spots available in the cabinet he/she is appointing.  If there are 13 eligible candidates for these positions (where rank matters), how many different ways can the members of the cabinet be appointed?
 
 ```{r}
-
+nsamp(13, 7, ordered = T) #8648640
 ``` 
 
 23. 	In how many ways can the letters in the word 'Population' be arranged?
 
 ```{r}
-
+word <- "Population"
+let_vec <- sapply(unlist(strsplit(word, "")), tolower)
+length(unique(permn(let_vec))) #WRONG
 ``` 
 
  
