@@ -1,4 +1,13 @@
 
+#Limits
+install.packages("Ryacas")
+require(Ryacas)
+x <- Sym("x") # define x as a symbolic variable
+Limit(sin(x)/(x), x, 0) # limit of sin(x)/x as x approaches 0
+
+library(rSymPy)
+sympy("limit(sin(x)/x, x, 0)")
+
 #Derivatives
 require(Deriv)
 Deriv(-2*x^3)
@@ -355,3 +364,5 @@ require(cubature)
 ?adaptIntegrate
 
 sin(0)
+
+
