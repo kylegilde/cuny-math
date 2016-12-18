@@ -15,23 +15,35 @@ Test Name: test2
 
 1. 	The weights of steers in a herd are distributed normally.  The variance is 40,000 and the mean steer weight is 1300 lbs.  Find the probability that the weight of a randomly selected steer is greater than 979 lbs. (Round your answer to 4 decimal places)
 
- 
+```{r}
+(979-1300)/200
+1 - .0495 #z table
+round(pnorm(979, 1300, 200, lower.tail = F), 4) #.9458 vs. .9463
+
+```
+
 
 2. 	SVGA monitors manufactured by TSI Electronics have life spans that have a normal distribution with a variance of 1,960,000 and a mean life span of 11,000 hours.  If a SVGA monitor is selected at random, find the probability that the life span of the monitor will be more than 8340 hours. (Round your answer to 4 decimal places)
-
- 
+```{r}
+round(pnorm(8340, 11000, sqrt(1960000), lower.tail = F), 4) #correct
+```
 
 3. 	Suppose the mean income of firms in the industry for a year is 80 million dollars with a standard deviation of 3 million dollars.  If incomes for the industry are distributed normally, what is the probability that a randomly selected firm will earn between 83 and 85 million dollars? (Round your answer to 4 decimal places)
-
- 
+```{r}
+round(pnorm(85000000, 80000000, 3000000) - pnorm(83000000, 80000000, 3000000), 4) #.1109 vs. .1112
+```
 
 4. 	Suppose GRE Verbal scores are normally distributed with a mean of 456 and a standard deviation of 123.  A university plans to offer tutoring jobs to students whose scores are in the top 14%.  What is the minimum score required for the job offer?  Round your answer to the nearest whole number, if necessary.
+```{r}
 
- 
+round(qnorm(.14, 456, 123, lower.tail = F), 0) #correct
+
+```
 
 5. 	The lengths of nails produced in a factory are normally distributed with a mean of 6.13 centimeters and a standard deviation of 0.06 centimeters.  Find the two lengths that separate the top 7% and the bottom 7%.  These lengths could serve as limits used to identify which nails should be rejected.  Round your answer to the nearest hundredth, if necessary.
-
- 
+```{r}
+c(round(qnorm(.07, 6.13, .06), 2), round(qnorm(.93, 6.13, .06), 2))
+```
 
 6. 	An English professor assigns letter grades on a test according to the following scheme.
 	A:  Top 13% of scores
@@ -41,14 +53,23 @@ Test Name: test2
 	F:  Bottom 9% of scores
 	Scores on the test are normally distributed with a mean of 78.8 and a standard deviation of 9.8.  Find the numerical limits for a C grade.  Round your answers to the nearest whole number, if necessary.
 
- 
+```{r}
+round(c(qnorm(.55, 78.8, 9.8), qnorm(.2, 78.8, 9.8)), 0) #correct
+
+```
+
 
 7. 	Suppose ACT Composite scores are normally distributed with a mean of 21.2 and a standard deviation of 5.4.  A university plans to admit students whose scores are in the top 45%.  What is the minimum score required for admission?  Round your answer to the nearest tenth, if necessary.
+```{r 7}
+round(qnorm(.55, 21.2, 5.4), 1) # == round(qnorm(.45, 21.2, 5.4, lower.tail = F), 1)
+#correct
+```
 
- 
- 
 
 8. 	Consider the probability that less than 11 out of 151 students will not graduate on time.  Assume the probability that a given student will not graduate on time is 9%.  Approximate the probability using the normal distribution. (Round your answer to 4 decimal places.)
+```{r}
+
+```
 
  
 
