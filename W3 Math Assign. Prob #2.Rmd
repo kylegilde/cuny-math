@@ -7,6 +7,26 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+answer_diff <- function(my_answer, answer_key) (my_answer - answer_key) / answer_key
+
+#Standard Error Function
+se <-  function(sdpop, N) sdpop / sqrt(N)
+
+#Load Answer Key
+require(RCurl)
+myfile <- "https://raw.githubusercontent.com/kylegilde/cuny-math/master/test3key.csv"
+myURL <- getURL(myfile)
+test3_key <- read.csv(text = myURL, sep = ",")
+
+#initializes DF
+answer_diff_df <- data.frame(question_num = integer(),
+                            answer_key = numeric(), 
+                             my_answer = numeric(),
+                             answer_diff = numeric(), 
+                             answer_diff_pct = numeric())
+#deletes all rows
+answer_diff_df <- answer_diff_df[0,] 
+
 ```
 
 ## W3 Math Assign. Prob #2
@@ -16,9 +36,21 @@ Test Name: test2
 1. 	The weights of steers in a herd are distributed normally.  The variance is 40,000 and the mean steer weight is 1300 lbs.  Find the probability that the weight of a randomly selected steer is greater than 979 lbs. (Round your answer to 4 decimal places)
 
 ```{r}
-(979-1300)/200
-1 - .0495 #z table
-round(pnorm(979, 1300, 200, lower.tail = F), 4) #.9458 vs. .9463
+#(979-1300)/200
+#1 - .0495 #z table
+my_answer <- round(pnorm(979, 1300, 200, lower.tail = F), 4) 
+#.9458 vs. .9463
+my_answer
+num <- 1
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+typeof(answer_key)
+answer_key
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+answer_diff_df
+#print(answer_diff_df, digits = 2)
+
 
 ```
 
@@ -30,7 +62,19 @@ round(pnorm(8340, 11000, sqrt(1960000), lower.tail = F), 4) #correct
 
 3. 	Suppose the mean income of firms in the industry for a year is 80 million dollars with a standard deviation of 3 million dollars.  If incomes for the industry are distributed normally, what is the probability that a randomly selected firm will earn between 83 and 85 million dollars? (Round your answer to 4 decimal places)
 ```{r}
-round(pnorm(85000000, 80000000, 3000000) - pnorm(83000000, 80000000, 3000000), 4) #.1109 vs. .1112
+my_answer <- round(pnorm(85000000, 80000000, 3000000) - pnorm(83000000, 80000000, 3000000), 4)
+# alternative: round(sum(dnorm(83000000:85000000, 80000000, 3000000)), 4)
+
+my_answer
+num <- 3
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+typeof(answer_key)
+answer_key
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+na.omit(answer_diff_df)
+#.1109 vs. .1112
 ```
 
 4. 	Suppose GRE Verbal scores are normally distributed with a mean of 456 and a standard deviation of 123.  A university plans to offer tutoring jobs to students whose scores are in the top 14%.  What is the minimum score required for the job offer?  Round your answer to the nearest whole number, if necessary.
@@ -68,6 +112,14 @@ round(qnorm(.55, 21.2, 5.4), 1) # == round(qnorm(.45, 21.2, 5.4, lower.tail = F)
 
 8. 	Consider the probability that less than 11 out of 151 students will not graduate on time.  Assume the probability that a given student will not graduate on time is 9%.  Approximate the probability using the normal distribution. (Round your answer to 4 decimal places.)
 ```{r}
+N <- 151
+P <- .09
+p <- 11/N
+p 
+serr <- sqrt(P * (1 - P) / N)
+#my_answer <- 
+round(pnorm(p, P, serr), 4) #WRONG
+
 
 ```
 
@@ -76,38 +128,93 @@ round(qnorm(.55, 21.2, 5.4), 1) # == round(qnorm(.45, 21.2, 5.4, lower.tail = F)
 9. 	The mean lifetime of a tire is 48 months with a standard deviation of 7.  If 147 tires are sampled, what is the probability that the mean of the sample would be greater than 48.83 months? (Round your answer to 4 decimal places)
 
  
+```{r}
+
+my_answer <- round(pnorm(48.83, 48, se(7, 147), lower.tail = F), 4)
+# .0753 vs. .0749
+my_answer
+num <- 9
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+answer_key
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+na.omit(answer_diff_df)
+```
 
 10. 	The quality control manager at a computer manufacturing company believes that the mean life of a computer is 91 months, with a standard deviation of 10.  If he is correct, what is the probability that the mean of a sample of 68 computers would be greater than 93.54 months? (Round your answer to 4 decimal places)
 
  
+```{r}
+my_answer <- round(pnorm(93.54, 91, se(10, 68), lower.tail = F), 4) 
+my_answer
+num <- 10
+answer_diff_df <- answer_diff_df[-num,]
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+na.omit(answer_diff_df)
+
+```
 
 11. 	A director of reservations believes that 7% of the ticketed passengers are no-shows.  If the director is right, what is the probability that the proportion of no-shows in a sample of 540 ticketed passengers would differ from the population proportion by less than 3%? (Round your answer to 4 decimal places)
 
  
+```{r}
+N <- 540
+P <- .07
+p1 <- .04
+p2 <- .10    
+serr <- sqrt(P * (1 - P) / N)
+# wrong approach round(sum(dnorm(p1:p2, P, serr)), 4)
+my_answer <- round(pnorm(p2, P, serr) - pnorm(p1, P, serr), 4)
+my_answer
+num <- 11
+answer_diff_df <- answer_diff_df[-num,]
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+na.omit(answer_diff_df)
+
+```
 
 12. 	A bottle maker believes that 23% of his bottles are defective.  If the bottle maker is accurate, what is the probability that the proportion of defective bottles in a sample of 602 bottles would differ from the population proportion by greater than 4%? (Round your answer to 4 decimal places)
 
  
+```{r}
+N <- 602
+P <- .23
+p1 <- .19
+p2 <- .27    
+serr <- sqrt(P * (1 - P) / N)
+
+my_answer <- round(pnorm(p1, P, serr) + pnorm(p2, P, serr, lower.tail = F), 4) 
+num <- 12
+answer_diff_df <- answer_diff_df[-num,]
+answer_key <- subset(test3_key$answer, test3_key$question_num == num)
+answer_diff <- my_answer - answer_key
+answer_diff_pct <- answer_diff / answer_key
+answer_diff_df[num, ] <- c(num, answer_key, my_answer, answer_diff, answer_diff_pct)
+na.omit(answer_diff_df)
+
+```
 
 13. 	A research company desires to know the mean consumption of beef per week among males over age 48.  Suppose a sample of size 208 is drawn with x ̅  = 3.9.  Assume ® = 0.8 .  Construct the 80% confidence interval for the mean number of lb. of beef per week among males over 48. (Round your answers to 1 decimal place) 
 
+```{r}
 
-
-
-
-
+```
 
 
 14. 	An economist wants to estimate the mean per capita income (in thousands of dollars) in a major city in California.  Suppose a sample of size 7472 is drawn with x ̅  = 16.6.  Assume ® = 11 .  Construct the 98% confidence interval for the mean per capita income. (Round your answers to 1 decimal place) 
 
+```{r}
+
+```
 
 
-
-
-
-
-
- 
 15. 	Find the value of t such that 0.05 of the area under the curve is to the left of t.  Assume the degrees of freedom equals 26.
 
 Step 1. Choose the picture which best describes the problem.
