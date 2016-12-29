@@ -18,7 +18,7 @@ myfile <- "https://raw.githubusercontent.com/kylegilde/cuny-math/master/test3key
 myURL <- getURL(myfile)
 test3_key <- read.csv(text = myURL, sep = ",")
 
-#initializes DF
+#Initializes DF
 answer_diff_df <- data.frame(question_num = integer(),
                             answer_key = numeric(), 
                              my_answer = numeric(),
@@ -36,8 +36,7 @@ Test Name: test2
 1. 	The weights of steers in a herd are distributed normally.  The variance is 40,000 and the mean steer weight is 1300 lbs.  Find the probability that the weight of a randomly selected steer is greater than 979 lbs. (Round your answer to 4 decimal places)
 
 ```{r}
-#(979-1300)/200
-#1 - .0495 #z table
+#continuous
 my_answer <- round(pnorm(979, 1300, 200, lower.tail = F), 4) 
 #.9458 vs. .9463
 my_answer
@@ -57,11 +56,13 @@ answer_diff_df
 
 2. 	SVGA monitors manufactured by TSI Electronics have life spans that have a normal distribution with a variance of 1,960,000 and a mean life span of 11,000 hours.  If a SVGA monitor is selected at random, find the probability that the life span of the monitor will be more than 8340 hours. (Round your answer to 4 decimal places)
 ```{r}
+#continuous
 round(pnorm(8340, 11000, sqrt(1960000), lower.tail = F), 4) #correct
 ```
 
 3. 	Suppose the mean income of firms in the industry for a year is 80 million dollars with a standard deviation of 3 million dollars.  If incomes for the industry are distributed normally, what is the probability that a randomly selected firm will earn between 83 and 85 million dollars? (Round your answer to 4 decimal places)
 ```{r}
+#continuous
 my_answer <- round(pnorm(85000000, 80000000, 3000000) - pnorm(83000000, 80000000, 3000000), 4)
 # alternative: round(sum(dnorm(83000000:85000000, 80000000, 3000000)), 4)
 
@@ -79,13 +80,14 @@ na.omit(answer_diff_df)
 
 4. 	Suppose GRE Verbal scores are normally distributed with a mean of 456 and a standard deviation of 123.  A university plans to offer tutoring jobs to students whose scores are in the top 14%.  What is the minimum score required for the job offer?  Round your answer to the nearest whole number, if necessary.
 ```{r}
-
+#discrete
 round(qnorm(.14, 456, 123, lower.tail = F), 0) #correct
 
 ```
 
 5. 	The lengths of nails produced in a factory are normally distributed with a mean of 6.13 centimeters and a standard deviation of 0.06 centimeters.  Find the two lengths that separate the top 7% and the bottom 7%.  These lengths could serve as limits used to identify which nails should be rejected.  Round your answer to the nearest hundredth, if necessary.
 ```{r}
+#continuous
 c(round(qnorm(.07, 6.13, .06), 2), round(qnorm(.93, 6.13, .06), 2))
 ```
 
@@ -98,6 +100,7 @@ c(round(qnorm(.07, 6.13, .06), 2), round(qnorm(.93, 6.13, .06), 2))
 	Scores on the test are normally distributed with a mean of 78.8 and a standard deviation of 9.8.  Find the numerical limits for a C grade.  Round your answers to the nearest whole number, if necessary.
 
 ```{r}
+#continuous???
 round(c(qnorm(.55, 78.8, 9.8), qnorm(.2, 78.8, 9.8)), 0) #correct
 
 ```
@@ -105,20 +108,24 @@ round(c(qnorm(.55, 78.8, 9.8), qnorm(.2, 78.8, 9.8)), 0) #correct
 
 7. 	Suppose ACT Composite scores are normally distributed with a mean of 21.2 and a standard deviation of 5.4.  A university plans to admit students whose scores are in the top 45%.  What is the minimum score required for admission?  Round your answer to the nearest tenth, if necessary.
 ```{r 7}
-round(qnorm(.55, 21.2, 5.4), 1) # == round(qnorm(.45, 21.2, 5.4, lower.tail = F), 1)
+#continuous
+round(qnorm(.55, 21.2, 5.4), 1) 
 #correct
 ```
 
 
 8. 	Consider the probability that less than 11 out of 151 students will not graduate on time.  Assume the probability that a given student will not graduate on time is 9%.  Approximate the probability using the normal distribution. (Round your answer to 4 decimal places.)
 ```{r}
-N <- 151
-P <- .09
-p <- 11/N
-p 
-serr <- sqrt(P * (1 - P) / N)
+#discrete???
+n <- 151
+Ppop <- .09
+p <- 11/n
+p
+serr <- sqrt(Ppop * (1 - Ppop) / n)
+
 #my_answer <- 
-round(pnorm(p, P, serr), 4) #WRONG
+round(pnorm(p, Ppop, serr), 4) #WRONG
+round(pbinom(11, 151, .09),4) #WRONG
 
 
 ```
@@ -201,9 +208,23 @@ na.omit(answer_diff_df)
 
 ```
 
-13. 	A research company desires to know the mean consumption of beef per week among males over age 48.  Suppose a sample of size 208 is drawn with x ̅  = 3.9.  Assume ® = 0.8 .  Construct the 80% confidence interval for the mean number of lb. of beef per week among males over 48. (Round your answers to 1 decimal place) 
+13. 	A research company desires to know the mean consumption of beef per week among males over age 48.  Suppose a sample of size 208 is drawn with x ̅  = 3.9.  Assume sigma = 0.8 .  Construct the 80% confidence interval for the mean number of lb. of beef per week among males over 48. (Round your answers to 1 decimal place) 
 
 ```{r}
+xbar <- 3.9
+n <- 208
+sdpop <- .8
+ci <- .8
+
+serr <- se(sdpop, n)
+zscore <- qnorm(1 - (1 - ci)/2)
+
+error <- zscore * serr
+lower_bound <- round(xbar - error, 2)
+upper_bound <- round(xbar + error, 2)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
+# vs 3.82 and 3.98
+
 
 ```
 
@@ -211,90 +232,253 @@ na.omit(answer_diff_df)
 14. 	An economist wants to estimate the mean per capita income (in thousands of dollars) in a major city in California.  Suppose a sample of size 7472 is drawn with x ̅  = 16.6.  Assume ® = 11 .  Construct the 98% confidence interval for the mean per capita income. (Round your answers to 1 decimal place) 
 
 ```{r}
+#Calculating Confidence Intervals w/ Z-scores
+#Inputs
+n <- 7472
+xbar <- 16.6
+sdpop <- 11
+ci <- .98
+dec_places <- 1
 
+#Inital Calculations
+serr <- se(sdpop, n)
+zscore <- qnorm(1 - (1 - ci)/2)
+error <- zscore * serr
+
+#Final Calculations
+lower_bound <- round(xbar - error, dec_places)
+upper_bound <- round(xbar + error, dec_places)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
+# Correct
 ```
 
 
 15. 	Find the value of t such that 0.05 of the area under the curve is to the left of t.  Assume the degrees of freedom equals 26.
 
 Step 1. Choose the picture which best describes the problem.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Answer: upper right
 
 Step 2. Write your answer below. 
+```{r}
+df <- 26
+p <- .05
+qt(p, df)
+#correct
+```
+
 
 16. 	The following measurements ( in picocuries per liter ) were recorded by a set of helium gas detectors installed in a laboratory facility:  
-	                                             383.6, 347.1, 371.9, 347.6, 325.8, 337
-	Using these measurements, construct a 90% confidence interval for the mean level of helium gas present in the facility.  Assume the population is normally distributed.  
+
+383.6, 347.1, 371.9, 347.6, 325.8, 337
+
+Using these measurements, construct a 90% confidence interval for the mean level of helium gas present in the facility.  Assume the population is normally distributed.  
 
 Step 1. Calculate the sample mean for the given sample data. (Round answer to 2 decimal places) 
-
+```{r}
+x <- c(383.6, 347.1, 371.9, 347.6, 325.8, 337)
+n <- length(x)
+df <- n - 1
+ci <- .9
+    
+dec_places <- 2
+xbar <- round(mean(x), dec_places)
+xbar
+```
 
 Step 2. Calculate the sample standard deviation for the given sample data. (Round answer to 2 decimal places) 
-
-
+```{r}
+s <- round(sd(x), dec_places)
+s
+serr <- round(se(s, n), dec_places)
+```
 Step 3. Find the critical value that should be used in constructing the confidence interval. (Round answer to 3 decimal places) 
-
-
+```{r}
+dec_places <- 3
+cv <- round(qt(1 - (1 - ci)/2, df), dec_places)
+cv
+```
 Step 4. Construct the 90% confidence interval. (Round answer to 2 decimal places)
-
-
-
-
-
- 
+```{r}
+dec_places <- 2
+error <- cv * serr
+lower_bound <- round(xbar - error, dec_places)
+upper_bound <- round(xbar + error, dec_places)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound) 
+#CORRECT!!!
+```
 
 17. 	A random sample of 16 fields of spring wheat has a mean yield of 46.4 bushels per acre and standard deviation of 2.45 bushels per acre.  Determine the 80% confidence interval for the true mean yield.  Assume the population is normally distributed.  
 
 Step 1. Find the critical value that should be used in constructing the confidence interval. (Round answer to 3 decimal places) 
+```{r}
+#Inputs
+n <- 16
+xbar <- 46.4
+sdpop <- 2.45
+ci <- .8
 
-
+serr <- se(sdpop, n)
+zscore <- round(qnorm(1 - (1 - ci)/2), 3)
+zscore
+```
 Step 2. Construct the 80% confidence interval. (Round answer to 1 decimal place)
-
-
-
-
-
+```{r}
+error <- zscore * serr
+lower_bound <- round(xbar - error, 1)
+upper_bound <- round(xbar + error, 1)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
+#correct
+```
 
 18. 	A toy manufacturer wants to know how many new toys children buy each year.  She thinks the mean is 8 toys per year.  Assume a previous study found the standard deviation to be 1.9.  How large of a sample would be required in order to estimate the mean number of toys bought per child at the 99% confidence level with an error of at most 0.13 toys? (Round your answer up to the next integer)
+```{r}
+#Clears Workspace & environment
+rm(list = ls())
 
+#Givens
+mu <- 8
+sdpop <- 1.9
+ci <- .99
+error <- .13
+#n <- 100
+
+#Initial Calculations
+zscore <- qnorm(1 - (1 - ci)/2)
+
+#Final Calculation
+n <- ceiling((zscore * sdpop / error)^2)
+
+#Validation
+serr <- sdpop/sqrt(n)
+zscore <- round(qnorm(1 - (1 - ci)/2), 3)
+error <- zscore * serr
+
+#Error is less than .13
+error <= .13
+
+```
  
 
 19. 	A research scientist wants to know how many times per hour a certain strand of bacteria reproduces.  He believes that the mean is 12.6.  Assume the variance is known to be 3.61.  How large of a sample would be required in order to estimate the mean number of reproductions per hour at the 95% confidence level with an error of at most 0.19 reproductions? (Round your answer up to the next integer)
+```{r}
+#Clears Workspace & environment
+rm(list = ls())
 
- 
+#Givens
+mu <- 12.6
+variance <- 3.61
+sdpop <- sqrt(variance)
+ci <- .95
+error <- .19
 
+#Initial Calculations
+zscore <- qnorm(1 - (1 - ci)/2)
+
+#Final Calculation
+n <- ceiling((zscore * sdpop / error)^2)
+n
+#Validation
+serr <- sdpop/sqrt(n)
+error_v <- zscore * serr
+error >= error_v
+#correct
+```
 20. 	The state education commission wants to estimate the fraction of tenth grade students that have reading skills at or below the eighth grade level.
 
 Step 1. Suppose a sample of 2089 tenth graders is drawn. Of the students sampled, 1734 read above the eighth grade level.  Using the data, estimate the proportion of tenth graders reading at or below the eighth grade level. (Write your answer as a fraction or a decimal number rounded to 3 decimal places) 
+```{r}
+#Clears Workspace & environment
+rm(list = ls())
+
+#Givens
+n <- 2089
+greaterthen8th <- 1734
+dec_places <- 3
+
+#Calculate p-hat
+phat <- round((n - greaterthen8th)/n, dec_places)
+phat
+```
 
 
 Step 2. Suppose a sample of 2089 tenth graders is drawn.  Of the students sampled, 1734 read above the eighth grade level.  Using the data, construct the 98% confidence interval for the population proportion of tenth graders reading at or below the eighth grade level. (Round your answers to 3 decimal places)
 
+```{r}
+#Givens 
+ci <- .98
+df <- n - 1
 
+#Inital Calculations
+serr <- sqrt(phat * (1 - phat) / n)
+tvalue <- qt(1 - (1 - ci)/2, df)
+error <- tvalue * serr
 
-
-
+#Final Calculations
+lower_bound <- round(phat - error, dec_places)
+upper_bound <- round(phat + error, dec_places)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
+#CORRECT
+```
 
 21. 	An environmentalist wants to find out the fraction of oil tankers that have spills each month.
 
 Step 1. Suppose a sample of 474 tankers is drawn.  Of these ships, 156 had spills.  Using the data, estimate the proportion of oil tankers that had spills. (Write your answer as a fraction or a decimal number rounded to 3 decimal places) 
+```{r}
+#Clears Workspace & environment
+rm(list = ls())
 
-[Continued on next page ....]
- 
+#Givens
+n <- 474
+spills <- 156
+dec_places <- 3
 
+#Calculate p-hat
+phat <- round(spills/n, dec_places)
+phat
+```
 Step 2. Suppose a sample of 474 tankers is drawn.  Of these ships, 156 had spills.  Using the data, construct the 95% confidence interval for the population proportion of oil tankers that have spills each month. (Round your answers to 3 decimal places)
+```{r}
+ci <- .95
+df <- n - 1
+
+#Inital Calculations
+serr <- sqrt(phat * (1 - phat) / n)
+tvalue <- qt(1 - (1 - ci)/2, df)
+error <- tvalue * serr
+
+#Final Calculations
+lower_bound <- round(phat - error, dec_places)
+upper_bound <- round(phat + error, dec_places)
+cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
+```
+
+##Other Problems
+1)  The cumulative distribution function of the random variable X is 
+
+What is the probability density function?  fx(x) = ax * e^(-ax)
+What is the expected value? 
+What is the variance?
+```{r}
+#Clears Workspace & environment
+rm(list = ls())
+
+require(Deriv)
+FXx <- function(x, a) 1 - exp(-a * x)
+Deriv(FXx)
+fxx <- function(x, a) a * exp(-a * x)
+integrate(fxx, 0, Inf)
+a <- Deriv(FXx)
+?integrate
+?Inf
+```
+
+
+2)  The probability mass function for a particular random variable Y is
+
+Derive the mean and standard deviation.
+```{r}
+FYy <- function(y, b) exp(-b) * b^y / factorial(y)
+curve(FYy)
+
+```
 
