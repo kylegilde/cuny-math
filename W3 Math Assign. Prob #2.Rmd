@@ -457,7 +457,14 @@ cat("lower bound:", lower_bound,"\nupper bound:", upper_bound)
 
 What is the probability density function?  fx(x) = ax * e^(-ax)
 What is the expected value? 
+
+E[X]=∫∞0 x * f(x)dx
+E(X)=∫∞0(1−FX(x))dx ???
+
 What is the variance?
+nor
+
+
 ```{r}
 #Clears Workspace & environment
 rm(list = ls())
@@ -465,11 +472,17 @@ rm(list = ls())
 require(Deriv)
 FXx <- function(x, a) 1 - exp(-a * x)
 Deriv(FXx)
-fxx <- function(x, a) a * exp(-a * x)
-integrate(fxx, 0, Inf)
-a <- Deriv(FXx)
-?integrate
-?Inf
+fXx <- function(x, a) a * exp(-a * x)
+fXx1 <- function(x) FXx(x, 1)
+fXx1
+integrate(fXx1, 0, Inf)
+
+#My attempt:
+#What is the probability density function?  fx(x) = a * exp(-a * x)
+#What is the expected value? EX = integrate(x * a * exp(-a * x), -Inf, Inf)
+#What is the variance? VarX = integrate(x^2 * a * exp(-a * x), -Inf, Inf) - (integrate(x * a * exp(-a * x), -Inf, Inf))^2
+
+
 ```
 
 
@@ -477,8 +490,38 @@ a <- Deriv(FXx)
 
 Derive the mean and standard deviation.
 ```{r}
-FYy <- function(y, b) exp(-b) * b^y / factorial(y)
-curve(FYy)
+
+fYy <- function(y, b) exp(-b) * b^y / factorial(y)
+mydf <- data.frame(y = integer(),
+                    b = numeric(), 
+                    fYy = numeric())
+
+#memory.limit(size = 4000)
+x <- 7
+max_value <- 10^x 
+y <- c(1:max_value)
+b <- c(rep(1, max_value))
+f <- c(fYy(b,y))
+#mydf <- mydf[0,]
+mydf <- cbind(y, b, f)
+sum(mydf[,3])
+EX <- sum(mydf[,1] * mydf[,3])
+VarX <- sum((mydf[,1] - EX)^2 * mydf[,3])
+?var()
+
+EX1 <- sum(mydf[,1]^2 * mydf[,3])
+VarX2 <- EX1 - EX^2
+EX
+VarX
+VarX2
+
+#Plot Normal Distro
+x   <- seq(0,1,length=100)
+x
+y   <- dnorm(x)
+plot(x,y, type="l", lwd=1)
+
+
 
 ```
 

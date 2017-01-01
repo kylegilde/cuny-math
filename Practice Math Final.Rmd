@@ -1,0 +1,121 @@
+---
+title: "Practice Math Final"
+author: "Kyle Gilde"
+date: "December 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions:
+Using the hflights package or another large (greater than 100,000 observations and 20 variables) dataset of your choosing, pick two quantitative variables (e.g., Arrival Delay and Departure Delay).  
+Define one of these variables as the random variable X and the other as the random variable Y.  
+One of these variables must be skewed to the right (positively)
+
+##Probability   
+Assume:
+small letter "x" is estimated as the 3d quartile of the X variable
+small letter "y" is estimated as the 2d quartile of the Y variable.  
+
+Calculate as a minimum the below probabilities a through d.  Interpret the meaning of all probabilities.
+a. P(X>x | Y>y)                  	
+b.  P(X>x, Y>y)               	
+c.  P(X<x | Y>y)   
+
+```{r Load}
+require(hflights) #https://cran.r-project.org/web/packages/hflights/hflights.pdf
+require(plyr)
+require(dplyr)
+require(reshape2)
+str(my_hflights)
+x <- 3
+y <- 2
+my_hflights <- cbind.data.frame(hflights$Distance
+                                ,hflights$AirTime
+                                ,ntile(hflights$Distance,4)
+                                ,ntile(hflights$AirTime, 4)
+                                )
+colnames(my_hflights)=c("X","Y", "X_quartile", "Y_quartile")
+quartile_counts <- as.data.frame(table(my_hflights[,3:4]), stringsAsFactors = F)
+quartile_counts <- transform(quartile_counts, 
+                             X_quartile = as.numeric(X_quartile),
+                             Y_quartile = as.numeric(Y_quartile))
+
+cat(sum(subset(quartile_counts$Freq, quartile_counts$X_quartile > x 
+               &  quartile_counts$Y_quartile > y)) 
+    / sum(subset(quartile_counts$Freq, quartile_counts$Y_quartile > y)), 
+    " is the probability of x being greater than its 3rd quartile given that y is greater than its 2nd quartile")
+
+cat(sum(subset(quartile_counts$Freq
+               , quartile_counts$X_quartile > x & quartile_counts$Y_quartile > y))
+    / sum(quartile_counts$Freq), 
+    " is the probability of both x being greater than its 3rd quartile & y being greater than its 2nd quartile")
+
+cat(sum(subset(quartile_counts$Freq, quartile_counts$X_quartile < x 
+               & quartile_counts$Y_quartile > y)) 
+    / sum(subset(quartile_counts$Freq, quartile_counts$Y_quartile > y)), 
+    " is the probability of x being less than its 3rd quartile given that y is greater than its 2nd quartile")
+
+
+```
+
+In addition, make a table of counts as shown below.   
+```{r}
+summary_table <- as.data.frame(table(ifelse(my_hflights[,3] > x,">3rd Quartile","<=3rd Quartile"),
+                                     ifelse(my_hflights[,4] > y,">2nd Quartile", "<=2nd Quartile")), stringsAsFactors = F)
+
+
+colnames(summary_table)=c("x", "y", "Freq")
+summary_table <- dcast(summary_table, x ~ y, fun.aggregate = sum, value.var = "Freq")
+summary_table <- cbind(summary_table, 
+                       Total = summary_table[,2] + summary_table[,3])
+
+summary_table <- rbind(summary_table, c("Total",
+                                        sum(summary_table[,2]),
+                                        sum(summary_table[,3]),
+                                        sum(summary_table[,4])))
+
+summary_table
+```
+
+##Descriptive and Inferential Statistics. 
+Provide univariate descriptive statistics and appropriate plots.  
+```{r}
+
+```
+
+Provide a scatterplot of the two variables.  
+```{r}
+
+```
+
+Provide a 95% CI for the difference in the mean of the variables. 
+```{r}
+
+```
+
+Derive a correlation matrix for two of the quantitative variables you selected.  
+```{r}
+
+```
+
+Test the hypothesis that the correlation between these variables is 0 and provide a 99% confidence interval.  Discuss the meaning of your analysis.
+```{r}
+
+```
+
+
+##Linear Algebra and Correlation.  
+
+Invert your correlation matrix. (This is known as the precision matrix and contains variance inflation factors on the diagonal.)
+Multiply the correlation matrix by the precision matrix, and then multiply the precision matrix by the correlation matrix. 
+As an advanced option, conduct principle components analysis and interpret.  Discuss.
+
+##Calculus-Based Probability & Statistics. 
+Many times, it makes sense to fit a closed form distribution to data.  For your variable that is skewed to the right, shift it so that the minimum value is above zero.  
+Then load the MASS package and run fitdistr to fit an exponential probability density function.  (See  https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ). 
+ Find the optimal value of l for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, l)).  Plot a histogram and compare it with a histogram of your original variable.   Using the exponential pdf, find the 5th and 95thpercentiles using the cumulative distribution function (CDF).   
+Also generate a 95% confidence interval from the empirical data, assuming normality. 
+ Finally, provide the empirical 5th percentile and 95th percentile of the data.  Discuss.

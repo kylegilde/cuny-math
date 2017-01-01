@@ -1,0 +1,207 @@
+---
+title: "W4 Math - Linear Algebra"
+author: "Kyle Gilde"
+date: "December 29, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## W4 Math - Linear Algebra
+### Homework
+
+1. Using matrix operations, describe the solutions for the following family of equations:
+x + 2y - 3z = 5
+2x + y - 3z = 13
+-x + y + 2z= -8
+a.  Find the inverse of the above 3x3 (non-augmented) matrix.
+```{r}
+D <-matrix(c(1,2,-3,5,2,1,-3,13,-1,1,2,-8),ncol=4,byrow=T)
+A <- D[,1:3] 
+B <- D[,4]
+solve(A)
+```
+b.  Solve for the solution using R.
+```{r}
+solve(A, B)
+```
+c.  Modify the  3x3 matrix such that there exists only one non-zero variable in the solution set.
+```{r}
+E <- A
+E[,2] <- B
+E
+solve(E, B)
+```
+2.  Consider the matrix, q=matrix(c(3,1,4,4,3,3,2,3,2),nrow=3). Let b=c(1,4,5).  Use Cramer's rule and R to determine the solution, x, to qx=b, if one exists.  Show all determinants.
+```{r}
+q <- matrix(c(3,1,4,4,3,3,2,3,2), nrow=3)
+b <- c(1,4,5)
+
+D <- det(q) #coefficient determinant
+Dx <- det(cbind(b, q[,2:3]))
+Dy <- det(cbind(q[,1], b, q[,3]))
+Dz <- det(cbind(q[,1:2], b))
+
+D;Dx;Dy;Dz
+solve(q, b)
+```
+
+
+### Introductory L. A. w/ R
+
+```{r}
+
+a <- c(2, 1, 3)
+b <- c(3, 4, 5)
+t(a)
+
+#Inner Product
+sum(a*b)
+
+# 1.2.8 Orthogonal (perpendicular) vectors
+# Two vectors v1 and v2 are orthogonal if their inner product is zero, written
+# v1 ⊥ v2 ⇔ v1 · v2 = 0
+# Note that any vector is orthogonal to the 0–vector. Orthogonal vectors:
+v1 <- c(1,1)
+v2 <- c(-1,1)
+sum(v1*v2)
+
+#Matrices
+A <-  matrix(c(1,3,2,2,8,9),ncol=3)
+A2 <- matrix(c(1,3,2,2,8,9),ncol=3,byrow=T)
+A
+A2
+
+#Vector & Matrix Multiplication
+A <- matrix(c(1,2,3,3,2,1),ncol=3, byrow = T) #2 by 3
+a <- c(3, 2, 1) # 3 by 1 
+A
+as.matrix(a) # a vector is treated like a 1-column matrix
+A%*%a # 2 by 1 
+A*a #this seems to cycle through the vector elements until all matrix elements have been multiplied
+
+#Special Matrices
+matrix(0,nrow=2,ncol=3)
+matrix(1,nrow=2,ncol=3)
+diag(c(1,2,3))
+diag(1,3)
+
+diag(diag(c(1,2,3)))
+diag(A)
+
+# Some facts about inverse matrices are:
+# • Only square matrices can have an inverse, but not all square matrices have an inverse.
+# • When the inverse exists, it is unique.
+# • Finding the inverse of a large matrix A is numerically complicated (but computers do
+# it for us).
+D <- matrix(c(1,3,2,4),ncol=2,byrow=T)
+solve(D)%*%D
+
+#Solving systems of linear equations: If Mx = z where M is a matrix and x and z are vectors the solution is x = M−1z:
+A <- matrix(c(1,2,3,4),ncol=2)
+b <- c(7,10)
+x <- solve(A, b)
+A
+b
+x
+
+```
+
+
+
+### Slides
+Properties of Matrix Addition
+1. Commutative Property
+A + B = B + A (Order does not matter)
+2. Associative Property
+(A + B) + C = A + (B + C) (Grouping does
+not matter)
+3. Additive Identity
+A + 0 = 0 + A = A (When you add to 0 then the
+matrix keeps its identity)
+4. Additive Inverse
+A + (-A) = -A + A = 0 (If you add the
+opposite, then you get 0.)
+
+```{r Slides Code & Notes}
+rm(list = ls())
+A=matrix(c("a11","a21","a12","a22"),2,2)
+B=matrix(c(1,5,-2,3,9,7,-4,0,6),3,3)
+C=matrix(c(-4,0,5,3,0,-2),2,3)
+D=matrix(c(1,3,-2,5,0,4),2,3)
+E=matrix(c(4,-2,3,2,-1,-4),2,3)
+D * E
+D+E
+F1=matrix(c(5,9,7,-6,10,-2),3,2)
+G=matrix(c(5,-3,6,6,11,-1),3,2)
+F1-G
+
+#Properties of Matrix Addition
+F+G
+G+F
+(C+D)+E
+C+(D+E)
+B+0 #R knows that this is a matrix of zeros
+0+B
+B+-B
+-B+B
+
+#Scalar Multiplication
+H=matrix(c(-3,0,6,-9),2,2)
+l=2
+l*H
+#Example:
+J=matrix(c(5,6,0,-2),2,2)
+K=matrix(c(0,3,-1,5),2,2)
+m=2
+n=-3
+m*J+n*K
+
+#Multiplying Matrices
+#Rows A * Columns of B, inner dimensions must match!!
+#2 x 2 x 2 x 1
+L=matrix(c(1,0,2,4),2,2)
+M=matrix(c(5,-2),2,1)
+L
+M
+L%*%M
+#what is M%*%L…???
+M%*%L
+#What about t(M)%*%L  Error in M %*% L : non-conformable arguments
+M
+t(M)
+t(M)%*%L
+# Multiplying Matrices Ex 2
+N=matrix(c(2,0,-8,4),2,2)
+O=matrix(c(1,-4,3,5,0,-2),2,3)
+N%*%O
+#Identity Matrix
+#Finding the multiplicative Inverse of a 2x2 Matrix
+
+A=matrix(c(5,-3,0,2),2,2)
+B=matrix(c(2,3,0,5),2,2)
+solve(A)
+#or
+1/det(A)*B
+
+#Birdie table problem
+B <- matrix(c(1,-1,-2,1,-.5,1.5),ncol=3,byrow=T)
+solve(B[,1:2],B[,3])
+
+fx <- function(x) .61 * x + 3.07
+fx(1:5)
+```
+
+Steps to finding the multiplicative inverse
+1. Form the augmented matrix [A│In]
+2. Perform row operations on it to obtain a matrix of the form [In│B].
+3. Matrix B is the inverse matrix.
+4. Verify the results by multiplying AB to see if you get In
+Matrix Row Operations
+1. Two rows may be interchanged
+2. The elements in any row may be multiplied by a nonzero number
+3. The elements in any row may be multiplied by a nonzero number, and
+these products may be added to the corresponding elements in any other row.
+ 
