@@ -1,0 +1,465 @@
+---
+title: "WinterMath Gilde Week1"
+author: "Kyle Gilde"
+date: "January 3, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, 
+                      warning=FALSE, 
+                      message=FALSE,
+                      #tidy=TRUE,
+                      comment = "",
+                      dev="png", 
+                      #fig.width = 6, 
+                      #fig.height = 4, 
+                      #dpi=200, 
+                      dev.args=list(type="cairo"))
+```
+
+```{r Load Packages, include=FALSE}
+#install.packages("Deriv","rootSolve","Ryacas")
+require(Deriv)
+require(rootSolve)
+require(Ryacas)
+#require(mosaic)
+rm(list = ls())
+yacas("PrettyPrinter'Set()") #demo("Ryacas-PrettyPrinter")  #vignette("Ryacas")
+```
+<style>
+div.beige pre { background-color:beige; }
+</style>
+ <div class = "beige">
+
+#Calculus & Linear Algebra
+##Calculus
+
+####1. 	It costs a toy retailer $10 to purchase a certain doll.  He estimates that, if he charges x dollars per doll, he can sell 80 - 2x  dolls per week.  Find a function for his weekly profit. 
+
+```{r #1}
+# P = Q(R-C)
+profit <- function(x) (80 - 2 * x) * (x - 10)
+x <- Sym("x") # define x as a symbolic variable
+profit(x)
+print("Simplify & Pretty Form") 
+PrettyForm(Simplify("%"))
+
+```
+
+####2. 	Given the following function: f (x)  = 8x^3  + 7x^2  - 5
+
++ Step 1. Find  f (3).  
+```{r #2.1}
+fx <- function(x) 8 * x^3  + 7 * x^2  - 5
+fx(3)
+```
+
++ Step 2. Find  f (-2).  
+```{r #2.2}
+fx(-2)
+```
+
+
++ Step 3. Find  f (x + c).  
+```{r #2.3}
+x <- Sym("x") # define x as a symbolic variable
+c <- Sym("c") # define x as a symbolic variable
+fx(x + c)
+print("Simplify & Pretty Form") 
+PrettyForm(Simplify("%"))
+
+```
+####3. 	Use the graph to find the indicated limits.  If there is no limit, state "Does not exist".  
+
++ Step 1. Find $$€–lim€—”¬(€–x†’1€—^- )”œ  f (x)”¤ $$. **2**
+
++ Step 2. Find $$€–lim€—”¬(€–x†’1€—^+ )”œ  f (x)”¤$$.  **-5**
+
++ Step 3. Find $$€–lim€—”¬(x†’1)”œ  f (x)”¤$$. **Does not exist**
+
+####4. 	Find the derivative for the following function. f (x)  = -2x^3
+```{r}
+fx <- function(x) -2 * x^3
+Deriv(fx)
+```
+ 
+
+####5. 	Find the derivative for the following function.	 f (x)  =  -8/x^2 
+```{r}
+fx <- function(x) -8/x^2 
+Deriv(fx)
+```
+ 
+
+#### 6. 	Find the derivative for the following function. g(x)  = 5âˆ›x
+```{r}
+fx <- function(x) 5 * x^(1/3)
+Deriv(fx)
+```
+ 
+
+#### 7. 	Find the derivative for the following function. y = -2x^(9/8)
+```{r}
+fx <- function(x) -2 * x^(9/8)
+Deriv(fx)
+```
+ 
+
+#### 8. 	Consider the graph of f(x).  What is the average rate of change of f(x)  from x_1  = 0  to x_2  = 4 ?  Please write your answer as an integer or simplified fraction. 
+**-1.25**
+
+####9. 	The cost of producing x baskets is given by C(x)  = 630 + 2.4x.  Determine the average cost function.   
+**(630 + 2.4 * x) / x**
+
+####10. 	Use the Product Rule or Quotient Rule to find the derivative. f(x)  = (-2x^(-2)  + 1)  (-5x + 9)
+```{r #10}
+
+fx  <- function(x) (-2 * x^-2  + 1) * (-5 * x + 9)
+fx.prime <- Deriv(fx)
+fx.prime(x)
+PrettyForm(Simplify("%"))
+```
+
+#### 11. 	Use the Product Rule or Quotient Rule to find the derivative. f(x)  =  (5x^(1/2)  + 7)/(-x^3  + 1)
+```{r #11}
+fx  <- function(x) (5 * x^.5  + 7)/(-x^3  + 1)
+fx.prime <- Deriv(fx)
+fx.prime(x)
+PrettyForm(Simplify("%"))
+```
+
+####12. 	Find the derivative for the given function.  Write your answer using positive and negative exponents and fractional exponents instead of radicals. f(x)  = (3x^(-3)  - 8x + 6)^(4/3)
+```{r #12}
+fx  <- function(x) (3 * x^-3  - 8 * x + 6)^(4/3)
+fx.prime <- Deriv(fx)
+fx.prime(x)
+#fx.p2 <- function(x) -4/3*(3 * x^-3 - 8 * x + 6)^(1/3)*(9 * x^-4+8)
+#cbind(fx.prime(t), fx.p2(t))
+
+```
+**(-4/3) * (3 * x^-3 - 8 * x + 6)^(1/3) * (9 * x^-4+8)**
+
+####13. 	After a sewage spill, the level of pollution in Sootville is estimated by  f (t)  =  (550t^2)/âˆš( &t^2  + 15), where t  is the time in days since the spill occurred.  How fast is the level changing after 3  days?  Round to the nearest whole number. 
+```{r #13}
+ft  <- function(t) (550 * t^2) / sqrt(t^2  + 15)
+ft.prime <- Deriv(ft)
+round(ft.prime(3))
+```
+
+####14. 	The average home attendance per week at a Class AA baseball park varied according to the formula N(t)  = 1000(6 + 0.1t)^(1/2) where  t is the number of weeks into the season (0 <= t <= 14) and  N represents the number of people.
+
++ Step 1. What was the attendance during the third week into the season?  Round your answer to the nearest whole number. 
+```{r #14.1}
+
+ft  <- function(t) 1000 * (6 + 0.1 * t)^(1/2)
+round(ft(3))
+
+```
+
++ Step 2. Determine  $$N´(5)$$ and interpret its meaning.  Round your answer to the nearest whole number.  
+```{r 14.2}
+ft.prime <- Deriv(ft)
+round(ft.prime(5))
+```
+**The attendance is increasing at a rate of 20 people during week 5.**
+
+####15. 	Consider the following function:  3x^3  + 4y^3  = 77
+
++ Step 1. Use implicit differentiation to find dy/dx.  
+```{r #15.1}
+y.prime <- function(x, y) -3 * x^2 / 4 * y^2
+y.prime
+```
+
++ Step 2. Find the slope of the tangent line at (3,-1).  
+```{r #15.2}
+y.prime(3, -1)
+```
+
+####16. 	Find the intervals on which the following function is increasing and on which it is decreasing. f(x)  =  (x + 3)/(x - 8)
+```{r #16}
+fx  <- function(x) (x + 3)/(x - 8)
+fx.prime <- Deriv(fx)
+# s <- seq(4, 12, by = .001)
+# plot(s, fx(s), type = 'l')
+#plot(fx.prime(s))
+#uniroot.all(fx.prime,c(-10, 10))
+```
+**never increasing; decreasing on on (-Inf, 8) and (8, Inf)**
+
+####17. 	A frozen pizza is placed in the oven at t = 0.  The function F(t)  = 14 +  (367t^2)/(t^2  + 100)  approximates the temperature (in degrees Fahrenheit) of the pizza at time t. 
+
++ Step 1. Determine the interval for which the temperature is increasing and the interval for which it is decreasing.  Please express your answers as open intervals. 
+```{r #17.1}
+ft  <- function(t) 14 + 367*t^2/(t^2  + 100) 
+ft.prime <- Deriv(ft)
+# curve(ft, 0 , 1000)
+# curve(ft.prime, 0 , 1000)
+# uniroot.all(ft, c(-100, 100))
+```
+**never decreasing; increasing on (0, Inf)**
+
++ Step 2. Over time, what temperature is the pizza approaching? 
+```{r 17.2}
+round(ft(1000000))
+```
+
+####18. 	A study says that the package flow in the East during the month of November follows  f (x)  =  x^3/3340000  -  (7x^2)/9475  +  42417727x/1265860000  +  1/33, where 1 <= x <= 30  is the day of the month and  f (x)  is in millions of packages.  What is the maximum number of packages delivered in November?  On which day are the most packages delivered?  Round your final answer to the nearest hundredth. 
+```{r 18}
+fx <- function(x)  x^3/3340000  -  (7*x^2)/9475  +  42417727*x/1265860000  +  1/33
+fx.prime <- Deriv(fx)
+cat(round(max(fx(1:30)), 2), "Million Packages")
+cat("November", round(uniroot.all(fx.prime, c(1, 30))))
+```
+
+####19. 	Use the Second Derivative Test to find all local extrema, if the test applies.  Otherwise, use the First Derivative Test.  Write any local extrema as an ordered pair. f(x)  = 7x^2  + 28x - 35
+```{r 19}
+second_deriv_test <- function(fx, f_dbl_prime, crit_value) 
+{
+    for (i in 1:length(crit_value))
+    {
+        if (f_dbl_prime(crit_value[i]) < 0)
+        {
+            print("Local Max:")
+            print(c(crit_value[i], fx(crit_value[i])))
+            } else if (f_dbl_prime(crit_value[i]) > 0)
+        {
+            print("Local Min:")
+            print(c(crit_value[i], fx(crit_value[i])))
+        } else
+        {
+            print("Unknown")
+        }
+    }
+}
+
+fx <- function(x)  7*x^2  + 28*x - 35
+fx.prime <- Deriv(fx)
+fx.dbl_prime <- Deriv(fx.prime)
+critical_points <- uniroot.all(fx.prime, c(-100,100))
+second_deriv_test(fx, fx.dbl_prime, critical_points)
+
+# curve(fx, -10, 10)
+# curve(fx.prime, -10, 10)
+```
+
+####20. 	Use the Second Derivative Test to find all local extrema, if the test applies.  Otherwise, use the First Derivative Test.  Write any local extrema as an ordered pair. f(x)  = -6x^3  + 27x^2  + 180x
+```{r 20}
+fx <- function(x)  -6*x^3  + 27*x^2  + 180*x
+fx.prime <- Deriv(fx)
+fx.dbl_prime <- Deriv(fx.prime)
+critical_points <- as.vector(uniroot.all(fx.prime, c(-100,100)))
+second_deriv_test(fx, fx.dbl_prime, critical_points)
+
+# curve(fx, -10, 10)
+# curve(fx.prime, -10, 10)
+```
+
+####21. 	A beauty supply store expects to sell 120 flat irons during the next year.  It costs $1.60 to store one flat iron for one year.  To reorder, there is a fixed cost of $6 , plus $4.50  for each flat iron ordered.  In what lot size and how many times per year should an order be placed to minimize inventory costs? 
+```{r 21}
+total_cost <- function(orders_per_year) {
+    120/orders_per_year * 1.6   + orders_per_year * (6 + 4.5 * 120/orders_per_year) 
+}
+total_cost.prime <- Deriv(total_cost)
+total_cost
+#total_cost.prime
+# curve(total_cost,1,120)
+# curve(total_cost.prime, 1, 120)
+orders_per_year <- round(uniroot.all(total_cost.prime, c(1, 120)))
+cat(orders_per_year, " orders of ", 120/orders_per_year, "each")
+```
+####22. 	A shipping company must design a closed rectangular shipping crate with a square base.  The volume is 18432 ft^3.  The material for the top and sides costs $3 per square foot and the material for the bottom costs $5 per square foot.  Find the dimensions of the crate that will minimize the total cost of material. 
+```{r 22}
+width <- function(h, L) 18432/(L*h)
+z <- function(h, L)  8*18432/(L*h)*L + 6*h*L + 6*h*18432/(L*h)
+
+z.prime <- Deriv(z)
+#z.prime #c(h = 6 * L - 147456/h^2, L = 6 * h - 110592/L^2)
+
+funh <- function(L) 110592/(6*L^2)
+funLoffunh <- function(L) 6 * L - 147456/funh(L)^2
+
+Lvalue1 <- uniroot(funLoffunh, c(0.00000001,18432))$root
+#Lvalue2 <- uniroot(funLoffunh, c(Lvalue1 + 0.00000001, 18432))$root
+# only 1 L value in this domain (other L value is 0)
+Hvalue1 <- funh(Lvalue1)
+crit <- c(Hvalue1, Lvalue1)
+
+zL <- function(h, L)  6 * h - 110592/L^2                       
+zh <- function(h, L)  6 * L - 147456/h^2   
+
+Deriv(zL) #c(h = 6, L = 221184/L^3)
+zLL <- function(L) 221184/L^3
+zLh <- 6
+ 
+Deriv(zh) # c(h = 294912/h^3, L = 6)
+zhh <- function(h) 294912/h^3
+zhL <- 6
+
+D <- function(zxx, zxy, zyy, zyx) zxx * zyy - zxy * zyx
+# D(zhh(crit[1]), zhL, zLL(crit[2]), zLh) #108 > 0 so we have a max or min
+# zhh(crit[1]) # 9.000008 is greater than 0 so we have a local min
+
+dims <- round(c(crit[1], crit[2], width(crit[1], crit[2]))) #dims
+dims
+#prod(dims) == 18432 checks out
+#z(dims[1], dims[2]) #min cost
+```
+####23. 	A farmer wants to build a rectangular pen and then divide it with two interior fences.  The total area inside of the pen will be 1056 square yards.  The exterior fencing costs $14.40 per yard  and the interior fencing costs $12.00 per yard .  Find the dimensions of the pen that will minimize the cost. 
+```{r 23}
+cost <- function(w) 28.8 * (1056 / w) + 52.8 * w
+cost.prime <- Deriv(cost)
+uniroot.all(cost.prime, c(0.00001,1056)); 1056/24
+```
+####24. 	It is determined that the value of a piece of machinery declines exponentially.  A machine that was purchased 7 years ago for $67000 is worth $37000 today.  What will be the value of the machine 9 years from now?  Round your answer to the nearest cent.
+```{r 24}
+r <- -((37000/67000)^(1/7) - 1)
+37000*(1 - r)^9
+```
+
+####25. 	The demand function for a television is given by p = D(x)  = 23.2 - 0.4x dollars.  Find the level of production for which the revenue is maximized. 
+```{r 25}
+dem <- function(x) 23.2 - 0.4*x
+rev <- function(x) x * dem(x)
+# curve(rev, 1, 100)
+
+rev.prime <- Deriv(rev)
+uniroot(rev.prime, c(0, 100))$root
+```
+####26. 	The amount of goods and services that costs $400 on January 1, 1995  costs $426.80  on January 1, 2006 .  Estimate the cost of the same goods and services on  January 1, 2017.  Assume the cost is growing exponentially.  Round your answer to the nearest cent.
+```{r 26}
+# new = orig * (1+r) ^ t
+r <- (426.8/400)^(1/11)-1
+round(400*(1 + r)^22,2) #?
+```
+####27. 	A manufacturer has determined that the marginal profit from the production and sale of x  clock radios is approximately 380 - 4x dollars per clock radio.   
++ Step 1. Find the profit function if the profit from the production and sale of 38  clock radios is $1700. 
+```{r 27.1}
+marginal_profit <- function(x) 380 - 4*x
+C <- -(-1700 +380 * 38 -2 * 38^2)
+profit <- function(x) -9852 + 380 * x - 2 * x^2
+profit
+```
+
++ Step 2. What is the profit from the sale of 56 clock radios? 
+```{r}
+profit(56)
+```
+
+####28. 	Use integration by substitution to solve the integral below. 
+$$ˆ«–’”œ (-5(ln(y) )^3)/y*dy$$  
+```{r}
+f.prime <- function(y)(-5 * (log(y))^3) / y
+# curve(f.prime, -100, 100)
+# antiD((-5*(log(y))^3)/y~y)
+# yacas(Integrate((-5 * (log(y))^3)/y, y))
+```
+-1.25*(ln(y))^4 + C
+
+####29. 	It was discovered that after t years a certain population of wild animals will increase at a rate of P'(t)  = 75 - 9t^(1/2) animals per year.  Find the increase in the population during the first 9 years after the rate was discovered.  Round your answer to the nearest whole animal. 
+```{r}
+p.prime <- function(t) 75 - 9*t^.5
+round(integrate(Vectorize(p.prime),0,9)$value)
+```
+####30. 	Find the area of the region bounded by the graphs of the given equations. y = 6x^2,y = 6 * x^.5 Enter your answer below. 
+```{r}
+s=seq(-.5,1.5,by=.01)
+fx <- function(x) 6*x^2
+fx2 <- function(x) 6 * x^.5
+plot(s,fx(s),type="l",col="red")
+lines(s,fx2(s),col="green",type = "l")
+#fx(1) == fx2(1) #the intersection
+integrate(Vectorize(fx2),0,1)$value - integrate(Vectorize(fx),0,1)$value
+```
+####31. 	Solve the differential equation given below. dy/dx  = x^3 * y
+**y = exp(x^4/4) + C**
+
+####32. 	Use integration by parts to evaluate the definite integral below. âˆ«_(-7)^2â–’â”œ xâˆš( &x + 7) dxâ”¤ Write your answer as a fraction.
+```{r 32}
+fx <- function(x) x * sqrt(x + 7)
+#integrate(Vectorize(fx),-7,2)$value
+print("-144/5")
+```
+####33. 	The following can be answered by finding the sum of a finite or infinite geometric sequence.  Round the solution to 2 decimal places.	A rubber ball is dropped from a height of 46 meters, and on each bounce it rebounds up 22 %  of its previous height.
+
++ Step 1. How far has it traveled vertically at the moment when it hits the ground for the 20^th time?  
+```{r 33.1}
+# total_dist <- 46
+# current_height <- 46
+# bounces <- 20
+
+distance_calculate <- function(current_height, bounces)
+{
+  total_dist <- current_height
+  for (i in 2:(bounces))
+  {
+    current_height <- current_height * .22
+    total_dist <- total_dist + current_height * 2
+  }
+  return(total_dist)
+}
+round(distance_calculate(46, 20),2)
+
+```
+
+
++ Step 2. If we assume it bounces indefinitely, what is the total vertical distance traveled? 
+```{r}
+round(distance_calculate(46, 1000000),2)
+```
+
+
+####34. 	Find the Taylor polynomial of degree 5 near x = 4  for the following function. 	y = 3e^(5x - 3) 
+```{r 34}
+
+x <- Sym("x")
+fx <- function(x) 3 * exp(5 * x - 3)
+# require(pracma) these didn't work
+# taylor(fx,5,4)
+# ?Taylor(fx)
+# yacas("Taylor(fx(x),5,4)")
+
+```
+**3e^17 + 15e^17 (x-4) + 75/2 e^17 (x-4)^2 + 125/2 e^17 (x-4)^3 + 625/8 e^17 (x-4)^4 + 625/8 e^17 (x-4)^5**
+
+##Linear Algebra
+####1.  Using matrix operations, describe the solutions for the following family of equations:
+x + 2y - 3z = 5
+
+2x + y - 3z = 13
+
+-x + y + 2z= -8
+
++ a.  Find the inverse of the above 3x3 (non-augmented) matrix.
+```{r}
+D <-matrix(c(1,2,-3,5,2,1,-3,13,-1,1,2,-8),ncol=4,byrow=T)
+A <- D[,1:3] 
+B <- D[,4]
+solve(A)
+```
++ b.  Solve for the solution using R.
+```{r}
+solve(A, B)
+```
++ c.  Modify the  3x3 matrix such that there exists only one non-zero variable in the solution set.
+```{r}
+E <- A
+E[,2] <- B
+E
+solve(E, B)
+```
+####2.  Consider the matrix, q=matrix(c(3,1,4,4,3,3,2,3,2),nrow=3). Let b=c(1,4,5).  Use Cramer's rule and R to determine the solution, x, to qx=b, if one exists.  Show all determinants.
+```{r}
+q <- matrix(c(3,1,4,4,3,3,2,3,2), nrow=3)
+b <- c(1,4,5)
+
+D <- det(q) #coefficient determinant
+Dx <- det(cbind(b, q[,2:3]))
+Dy <- det(cbind(q[,1], b, q[,3]))
+Dz <- det(cbind(q[,1:2], b))
+
+c(D,Dx,Dy,Dz)
+solve(q, b)
+```
+</div>
